@@ -28,13 +28,17 @@ export default function ComboBox({ selectCityHanlder }: IComboBoxProps) {
         (gov) => gov.en === selectedOption.value
       );
       if (currentGov) {
-        setSelectedOption({
-          label: i18n.language === "ar" ? currentGov.ar : currentGov.en,
-          value: currentGov.en,
-        });
+        const newLabel = i18n.language === "ar" ? currentGov.ar : currentGov.en;
+        // Only update if the label has actually changed
+        if (newLabel !== selectedOption.label) {
+          setSelectedOption({
+            label: newLabel,
+            value: currentGov.en,
+          });
+        }
       }
     }
-  }, [i18n.language]);
+  }, [i18n.language, selectedOption]);
 
   return (
     <Autocomplete
@@ -58,16 +62,20 @@ export default function ComboBox({ selectCityHanlder }: IComboBoxProps) {
           transition: " border-color 0.5s",
         },
       }}
-      renderOption={(props, option) => (
-        <li
-          {...props}
-          style={{
-            color: "#0052d0", // Change text color to blue
-          }}
-        >
-          {option.label}
-        </li>
-      )}
+      renderOption={(props, option) => {
+        const { key, ...otherProps } = props;
+        return (
+          <li
+            key={key}
+            {...otherProps}
+            style={{
+              color: "#0052d0", // Change text color to blue
+            }}
+          >
+            {option.label}
+          </li>
+        );
+      }}
       renderInput={(params) => (
         <TextField
           {...params}

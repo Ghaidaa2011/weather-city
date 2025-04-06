@@ -1,20 +1,15 @@
-//React
 import { useEffect, useState } from "react";
-//Types
-import { TWeather } from "../types/weather.types";
 //Extrernal Libraries
-import axios from "axios";
 import moment from "moment/min/moment-with-locales";
 //data
 import { governments } from "../data/governments";
+import { actGetWeather } from "../store/weather/weatherSlice";
+//Store
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 const useAppWeather = ({ locale }: { locale: string }) => {
-  const [loading, setLoading] = useState(true);
-  const [weather, setWeather] = useState<TWeather>({
-    temp: 0,
-    description: "",
-    feelsLike: 0,
-    icon: "",
-  });
+  const { weather, loading } = useAppSelector((state) => state.weather);
+  const dispatch = useAppDispatch();
+
   const [city, setCity] = useState("Cairo");
   const selectCityHanlder = (city: string) => {
     setCity(city);
@@ -22,43 +17,18 @@ const useAppWeather = ({ locale }: { locale: string }) => {
   const [dateAndTime, setDateAndTime] = useState("");
   useEffect(() => {
     setDateAndTime(moment().format("dddd | D MMMM YYYY"));
-    const controller = new AbortController();
-    const API_KEY = import.meta.env.VITE_API_KEY;
-    const getWeatherData = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `https://api.openweathermap.org/data/2.5/weather?q=${city},EG&lang=${locale}&appid=${API_KEY}`,
-          {
-            signal: controller.signal,
-          }
-        );
-        const temp = Math.floor(response.data.main.temp - 273.15);
-        const feelsLike = Math.floor(response.data.main.feels_like - 273.15);
-        const description = response.data.weather[0].description;
-        const icon = response.data.weather[0].icon;
 
-        setWeather({
-          temp,
-          feelsLike,
-          description,
-          icon: `https://openweathermap.org/img/wn/${icon}@2x.png`,
-        });
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-        setLoading(false);
-      }
-    };
-    getWeatherData();
+    const promise = dispatch(actGetWeather({ city, locale }));
     return () => {
-      controller.abort();
+      promise.abort();
     };
-  }, [locale, city]);
+  }, [locale, city, dispatch]);
+
   const translatedCity =
     governments.find((gov) => gov.en === city)?.[
       locale === "ar" ? "ar" : "en"
     ] || city;
+
   return { translatedCity, loading, weather, dateAndTime, selectCityHanlder };
 };
 export default useAppWeather;

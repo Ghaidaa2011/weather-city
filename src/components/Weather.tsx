@@ -1,14 +1,15 @@
 import { Box, Divider, Typography } from "@mui/material";
 import CloudIcon from "@mui/icons-material/Cloud";
-import { TWeather } from "../types/weather.types";
 import { useTranslation } from "react-i18next";
 import Loading from "./Loading";
+import { TWeather } from "../types/weather.types";
+import { TLoading } from "../types/shared.types";
 
 interface IWeatherProps {
   weather: TWeather;
   dateAndTime: string;
   city: string;
-  loading: boolean;
+  loading: TLoading;
 }
 const Weather = ({ weather, dateAndTime, city, loading }: IWeatherProps) => {
   const { temp, description, feelsLike, icon } = weather;
@@ -50,9 +51,7 @@ const Weather = ({ weather, dateAndTime, city, loading }: IWeatherProps) => {
         }}
       >
         {/* Degree */}
-        {loading ? (
-          <Loading />
-        ) : (
+        {loading === "succeeded" ? (
           <Box>
             <Box
               sx={{
@@ -80,6 +79,8 @@ const Weather = ({ weather, dateAndTime, city, loading }: IWeatherProps) => {
               </Typography>
             </Box>
           </Box>
+        ) : (
+          <Loading />
         )}
         {/* ===Degree=== */}
 
