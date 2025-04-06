@@ -11,7 +11,7 @@ export const governments = [
   { en: "Tanta, Gharbia", ar: "الغربية" },
   { en: "Giza", ar: "الجيزة" },
   { en: "Ismailia", ar: "الإسماعيلية" },
-  { en: "Mutubisو Kafr El Sheikh", ar: "كفر الشيخ" },
+  { en: "Mutubis, Kafr El Sheikh", ar: "كفر الشيخ" },
   { en: "Luxor", ar: "الأقصر" },
   { en: "Marsa Matruh", ar: "مطروح" },
   { en: "Minya", ar: "المنيا" },
